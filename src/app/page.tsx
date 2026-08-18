@@ -1,6 +1,5 @@
 "use client";
-
-import { useState } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 
 /*
   ============================================================
@@ -36,20 +35,19 @@ export default function Home() {
   const closeMenu = () => {
     setMenuOpen(false);
   };
+const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const { name, value } = event.target;
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
+  setFormData((previous) => ({
+    ...previous,
+    [name]: value,
+  }));
+};
 
-    setFormData((previous) => ({
-      ...previous,
-      [name]: value,
-    }));
-  };
+const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  event.preventDefault();
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    const whatsappMessage = `
+  const whatsappMessage = `
 Hello ARTIZO,
 
 I would like to make an enquiry.
@@ -64,23 +62,24 @@ Message:
 ${formData.message || "No additional message."}
 
 Thank you.
-    `.trim();
+  `.trim();
 
-    const whatsappUrl =
-      `https://wa.me/${WHATSAPP_NUMBER}` +
-      `?text=${encodeURIComponent(whatsappMessage)}`;
+  const whatsappUrl =
+    `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+      whatsappMessage
+    )}`;
 
-    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+  window.open(whatsappUrl, "_blank", "noopener,noreferrer");
 
-    setFormData({
-      name: "",
-      phone: "",
-      email: "",
-      service: "",
-      date: "",
-      message: "",
-    });
-  };
+  setFormData({
+    name: "",
+    phone: "",
+    email: "",
+    service: "",
+    date: "",
+    message: "",
+  });
+};      
 
   return (
     <>
@@ -744,7 +743,7 @@ Thank you.
                 <textarea
                   id="message"
                   name="message"
-                  rows="5"
+                  rows={5}
                   placeholder="Tell us about your project..."
                   value={formData.message}
                   onChange={handleChange}
